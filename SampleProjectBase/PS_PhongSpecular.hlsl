@@ -16,10 +16,11 @@ struct PS_IN
 //ライト情報を保持する定数バッファ
 cbuffer Light : register(b0)
 {
-  
+   
     float4 lightDiffuse;
     float4 lightAmbiment;
     float4 lightDir;
+   
 };
 
 //カメラの定数バッファ

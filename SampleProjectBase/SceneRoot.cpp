@@ -21,8 +21,8 @@ enum SceneKind
 {
 	SCENE_BLANK,		// 空きシーン
 	SCENE_VISUAL,		// 01_シェーダー入門
+	SCENE_MOVEOBJECT,	// 01_シェーダー入門
 	SCENE_SHADING,		// 02_スムースシェーディング
-	SCENE_MOVEOBJECT,
 	//SCENE_ANIMATION,	// ワンスキンアニメーションサンプル
 	SCENE_MAX			// 終端
 };
