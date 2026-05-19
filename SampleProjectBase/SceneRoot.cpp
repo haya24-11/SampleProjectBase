@@ -10,6 +10,7 @@
 #include "SceneBlank.h"
 #include "SceneMoveObject.h"
 #include"SceneShading.h"
+#include"SceneLight.h"
 
 #include "DebugLog.h"
 
@@ -24,6 +25,7 @@ enum SceneKind
 	SCENE_MOVEOBJECT,	// 01_シェーダー入門
 	SCENE_SHADING,		// 02_スムースシェーディング
 	//SCENE_ANIMATION,	// ワンスキンアニメーションサンプル
+	SCENE_LIGHT,
 	SCENE_MAX			// 終端
 };
 
@@ -52,6 +54,7 @@ void SceneRoot::ChangeScene()
 		AddSubScene<SceneShading>();
 			m_sceneName = "SCENE_SHADING";
 			break;
+	case SCENE_LIGHT:AddSubScene<SceneLight>(); break;
 	/*case SCENE_ANIMATION:
 		AddSubScene<SceneAnimation>();
 		sceneName = "SCENE_HIT";

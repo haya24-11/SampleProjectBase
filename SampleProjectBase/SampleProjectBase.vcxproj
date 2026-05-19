@@ -190,6 +190,7 @@
     <ClCompile Include="SceneAnimation.cpp" />
     <ClCompile Include="SceneBase.cpp" />
     <ClCompile Include="SceneBlank.cpp" />
+    <ClCompile Include="SceneLight.cpp" />
     <ClCompile Include="SceneMoveObject.cpp" />
     <ClCompile Include="SceneShading.cpp" />
     <ClCompile Include="SceneVisual.cpp" />
@@ -221,6 +222,7 @@
     <ClInclude Include="SceneAnimation.h" />
     <ClInclude Include="SceneBase.hpp" />
     <ClInclude Include="SceneBlank.h" />
+    <ClInclude Include="SceneLight.h" />
     <ClInclude Include="SceneMoveObject.h" />
     <ClInclude Include="SceneRoot.h" />
     <ClInclude Include="SceneShading.h" />
@@ -244,6 +246,18 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="PS_PhongSpecular.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="PS_PointLight.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="PS_SpotLight.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

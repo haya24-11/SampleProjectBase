@@ -93,9 +93,6 @@
     <ClCompile Include="Sprite.cpp">
       <Filter>ソース ファイル\System</Filter>
     </ClCompile>
-    <ClCompile Include="SceneRoot.cpp">
-      <Filter>ソース ファイル\App</Filter>
-    </ClCompile>
     <ClCompile Include="LightBase.cpp">
       <Filter>ソース ファイル\System</Filter>
     </ClCompile>
@@ -136,6 +133,12 @@
       <Filter>ソース ファイル\App\Scene</Filter>
     </ClCompile>
     <ClCompile Include="SceneShading.cpp">
+      <Filter>ソース ファイル\App\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneLight.cpp">
+      <Filter>ソース ファイル\App\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneRoot.cpp">
       <Filter>ソース ファイル\App\Scene</Filter>
     </ClCompile>
   </ItemGroup>
@@ -224,6 +227,9 @@
     <ClInclude Include="SceneShading.h">
       <Filter>ヘッダー ファイル\App\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="SceneLight.h">
+      <Filter>ヘッダー ファイル\App\Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PS_TexColor.hlsl">
@@ -245,6 +251,12 @@
       <Filter>リソース ファイル\VertexShader</Filter>
     </FxCompile>
     <FxCompile Include="PS_PhongSpecular.hlsl">
+      <Filter>リソース ファイル\PixelShader</Filter>
+    </FxCompile>
+    <FxCompile Include="PS_PointLight.hlsl">
+      <Filter>リソース ファイル\PixelShader</Filter>
+    </FxCompile>
+    <FxCompile Include="PS_SpotLight.hlsl">
       <Filter>リソース ファイル\PixelShader</Filter>
     </FxCompile>
   </ItemGroup>
