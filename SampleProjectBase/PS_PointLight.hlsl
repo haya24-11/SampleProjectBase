@@ -26,7 +26,7 @@ cbuffer LightBuf : register(b0)
 Texture2D tex : register(t0);
 SamplerState samp : register(s0);
 
-float4 main(PS_IN pin):SV_TATGET
+float4 main(PS_IN pin):SV_TARGET
 {
     float4 color = float4(0.0f, 0.0f, 0.0f,1.0f);
     float4 texcolor = float4(0.0f, 0.0f, 0.0f, 1.0f);
