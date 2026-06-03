@@ -15,14 +15,16 @@ void SceneLight::Init()
 		CreateObj<PixelShader>("PS_TexColor"),
 		CreateObj<VertexShader>("VS_WorldPosition"),
 		CreateObj<PixelShader>("PS_PointLight"),
-		CreateObj<PixelShader>("PS_SpotLight")
+		CreateObj<PixelShader>("PS_SpotLight"),
+		CreateObj<PixelShader>("PS_RimLight"),
 	};
 	const char* file[] = {
 		"Assets/Shader/VS_Object.cso",
 		"Assets/Shader/PS_TexColor.cso",
 		"Assets/Shader/VS_WorldPosition.cso",
 		"Assets/Shader/PS_PointLight.cso",
-		"Assets/Shader/PS_SpotLight.cso"
+		"Assets/Shader/PS_SpotLight.cso",
+		"Assets/Shader/PS_RimLight.cso"
 	};
 
 	int shaderNum = _countof(shader);
@@ -81,6 +83,15 @@ void SceneLight::Draw()
 	mat[1] = pCamera->GetView();
 	mat[2] = pCamera->GetProj();
 
+	// 定数バッファに渡すライトの情報
+	DirectX::XMFLOAT3 lightDir =
+		pLight->GetDirection();
+	DirectX::XMFLOAT4 light[] = {
+		pLight->GetDiffuse(),
+		pLight->GetAmbient(),
+		{lightDir.x, lightDir.y, lightDir.z, 0.0f}
+	};
+
 	// 定数バッファに渡すポイントライトの情報
 	struct Light {
 		DirectX::XMFLOAT4 color;
@@ -125,7 +136,8 @@ void SceneLight::Draw()
 		GetObj<Shader>("PS_TexColor"),
 		GetObj<Shader>("VS_WorldPosition"),
 		GetObj<Shader>("PS_PointLight"),
-		GetObj<Shader>("PS_SpotLight")
+		GetObj<Shader>("PS_SpotLight"),
+		GetObj<Shader>("PS_RimLight")
 	};
 	// モデルの表示(点光源)
 	DirectX::XMStoreFloat4x4(&mat[0], DirectX::XMMatrixTranspose(
@@ -170,6 +182,16 @@ void SceneLight::Draw()
 	Geometory::SetColor({ 1.0f, 1.0f, 1.0f, 1.5f });
 	Geometory::DrawSphere();
 
+	// モデルの表示(リムライト)
+	DirectX::XMStoreFloat4x4(&mat[0], DirectX::XMMatrixTranspose(
+		DirectX::XMMatrixTranslation(3.0f, 0.0f, 0.0f)
+	));
+	shader[2]->WriteBuffer(0, mat);
+	shader[5]->WriteBuffer(0, light);
+	shader[5]->WriteBuffer(1, camera);
+	pModel->SetVertexShader(shader[2]);
+	pModel->SetPixelShader(shader[5]);
+	pModel->Draw();
 }
 
 

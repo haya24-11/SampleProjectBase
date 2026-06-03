@@ -11,8 +11,9 @@
 #include "SceneMoveObject.h"
 #include"SceneShading.h"
 #include"SceneLight.h"
-
+#include"SceneBurstVectoe.h"
 #include "DebugLog.h"
+
 
 
 #define STR(var) #var
@@ -26,6 +27,7 @@ enum SceneKind
 	SCENE_SHADING,		// 02_スムースシェーディング
 	//SCENE_ANIMATION,	// ワンスキンアニメーションサンプル
 	SCENE_LIGHT,
+	SCENE_BURSTVECTOE,
 	SCENE_MAX			// 終端
 };
 
@@ -54,6 +56,10 @@ void SceneRoot::ChangeScene()
 		AddSubScene<SceneShading>();
 			m_sceneName = "SCENE_SHADING";
 			break;
+	case SCENE_BURSTVECTOE:
+		AddSubScene<SceneBurstVectoe>();
+		m_sceneName = "SCENE_BURT";
+		break;
 	case SCENE_LIGHT:AddSubScene<SceneLight>(); break;
 	/*case SCENE_ANIMATION:
 		AddSubScene<SceneAnimation>();

@@ -8,7 +8,7 @@ struct PS_IN
     float4 pos : SV_POSITION0;
     float3 normal : NORMAL0;
     float2 uv : TEXCOOD0;
-    float3 worldPos : SV_Position;
+    float3 worldPos : POSITION0;
 };
 
 cbuffer Light : register(b0)
@@ -23,7 +23,7 @@ cbuffer Light : register(b0)
 Texture2D tex : register(t0);
 SamplerState samp : register(s0);
 
-float4 main(PS_IN pin):SVTAGET
+float4 main(PS_IN pin):SV_TARGET
 {
     float4 color = float4(0.0f, 0.0f, 0.0f, 1.0f);
     color = tex.Sample(samp, pin.uv);
