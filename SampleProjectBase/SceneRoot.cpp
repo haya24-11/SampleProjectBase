@@ -5,13 +5,15 @@
 #include "Model.h"
 #include "Input.h"
 #include "Geometory.h"
-
+#include"SceneToon.h"
 #include "SceneVisual.h"
 #include "SceneBlank.h"
 #include "SceneMoveObject.h"
 #include"SceneShading.h"
 #include"SceneLight.h"
 #include"SceneBurstVectoe.h"
+#include"SceneBumpmap.h"
+#include"SceneBezierCurve.h"
 #include "DebugLog.h"
 
 
@@ -27,7 +29,10 @@ enum SceneKind
 	SCENE_SHADING,		// 02_スムースシェーディング
 	//SCENE_ANIMATION,	// ワンスキンアニメーションサンプル
 	SCENE_LIGHT,
+	SCENE_BUMPMAP,
 	SCENE_BURSTVECTOE,
+	SCENE_BEZIERCURVE,
+	SCENE_TOON,
 	SCENE_MAX			// 終端
 };
 
@@ -60,7 +65,18 @@ void SceneRoot::ChangeScene()
 		AddSubScene<SceneBurstVectoe>();
 		m_sceneName = "SCENE_BURT";
 		break;
-	case SCENE_LIGHT:AddSubScene<SceneLight>(); break;
+	case SCENE_LIGHT:AddSubScene<SceneLight>();
+		break;
+	case SCENE_BUMPMAP:
+		AddSubScene<SceneBumpmap>();
+		m_sceneName = "bupmap";
+		break;
+	case SCENE_BEZIERCURVE:AddSubScene<SceneBezierCurve>();
+		m_sceneName = "SCENE_BEZIERCURVE";
+		break;
+	case SCENE_TOON:AddSubScene<SceneToon>();
+		m_sceneName = "SCNENE_TOON";
+	
 	/*case SCENE_ANIMATION:
 		AddSubScene<SceneAnimation>();
 		sceneName = "SCENE_HIT";

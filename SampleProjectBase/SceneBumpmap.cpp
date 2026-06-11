@@ -195,6 +195,7 @@ void SceneBumpmap::Draw()
 	// ハイトマップ取得
 	Texture* pHeightMap = GetObj<Texture>("HeightMap");
 
+	//shader[shaderPair[i][1]]->SetTexture()
 
 	// 描画
 	int drawNum = _countof(shaderPair);

@@ -39,7 +39,7 @@ float4 main(PS_IN pin):SV_TARGET
     float3 L = normalize(-lightDir.xyz);
     float diffuse = saturate(dot(N, L));
 
-    color *= diffuse * lightDiffuse + lightAmbient;
+    color *= diffuse * lightDiffuse /3.1415926f+ lightAmbient;
     return color;
 }
 
