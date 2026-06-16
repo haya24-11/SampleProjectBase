@@ -14,6 +14,7 @@
 #include"SceneBurstVectoe.h"
 #include"SceneBumpmap.h"
 #include"SceneBezierCurve.h"
+#include "ScenePBR.h"
 #include "DebugLog.h"
 
 
@@ -33,6 +34,7 @@ enum SceneKind
 	SCENE_BURSTVECTOE,
 	SCENE_BEZIERCURVE,
 	SCENE_TOON,
+	SCENE_PBR,
 	SCENE_MAX			// 終端
 };
 
@@ -74,9 +76,15 @@ void SceneRoot::ChangeScene()
 	case SCENE_BEZIERCURVE:AddSubScene<SceneBezierCurve>();
 		m_sceneName = "SCENE_BEZIERCURVE";
 		break;
-	case SCENE_TOON:AddSubScene<SceneToon>();
-		m_sceneName = "SCNENE_TOON";
-	
+	case SCENE_TOON:
+		AddSubScene<SceneToon>();
+		m_sceneName = "SCENE_TOON";
+		break;
+	case SCENE_PBR:
+		AddSubScene<ScenePBR>();
+		m_sceneName = "SCENE_PBR";
+		break;
+
 	/*case SCENE_ANIMATION:
 		AddSubScene<SceneAnimation>();
 		sceneName = "SCENE_HIT";
