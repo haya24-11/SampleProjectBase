@@ -14,7 +14,6 @@
 #include"SceneBurstVectoe.h"
 #include"SceneBumpmap.h"
 #include"SceneBezierCurve.h"
-#include "ScenePBR.h"
 #include "DebugLog.h"
 
 
@@ -79,10 +78,6 @@ void SceneRoot::ChangeScene()
 	case SCENE_TOON:
 		AddSubScene<SceneToon>();
 		m_sceneName = "SCENE_TOON";
-		break;
-	case SCENE_PBR:
-		AddSubScene<ScenePBR>();
-		m_sceneName = "SCENE_PBR";
 		break;
 
 	/*case SCENE_ANIMATION:
