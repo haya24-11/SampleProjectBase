@@ -148,27 +148,24 @@ float4 main(PS_IN pin) : SV_TARGET {
     float3 specular = (D*G*F)/max(4.0f*NdotV*NdotL, 1e-4f);
     float3 kD = (1.0f-F)*(1.0f-metallic);
     float3 diffuse = kD*albedo.rgb/PI;
-    // シャドウ (昼間のみ)
-    float shadow = 1.0f;
-    if (dayFactor > 0.1f) {
+    // シャドウ デバッグ可視化
+    // 青 = 影マップ範囲外, 緑 = 範囲内(光当たり), 赤 = 影
+    {
         float3 proj = pin.shadowPos.xyz / pin.shadowPos.w;
         float2 suv  = proj.xy * 0.5f + 0.5f;
         suv.y = 1.0f - suv.y;
         if (suv.x > 0.0f && suv.x < 1.0f && suv.y > 0.0f && suv.y < 1.0f
             && proj.z >= 0.0f && proj.z <= 1.0f) {
-            // PCF 3x3
-            float shadowDepth = 0.0f;
-            float texelSize = 1.0f / 1024.0f;
-            for (int sy = -1; sy <= 1; ++sy)
-                for (int sx = -1; sx <= 1; ++sx) {
-                    float2 off = float2(sx, sy) * texelSize;
-                    float closest = shadowMap.Sample(samp, suv + off).r;
-                    shadowDepth += (proj.z - 0.002f > closest) ? 1.0f : 0.0f;
-                }
-            shadowDepth /= 9.0f;
-            shadow = 1.0f - shadowDepth * dayFactor * 0.95f;
+            float closest = shadowMap.Sample(samp, suv).r;
+            if (proj.z - 0.001f > closest)
+                return float4(1, 0, 0, 1); // 赤 = 影検出
+            else
+                return float4(0, 1, 0, 1); // 緑 = 影マップ範囲内・光当たり
+        } else {
+            return float4(0, 0, 1, 1); // 青 = 影マップ範囲外
         }
     }
+    float shadow = 1.0f;
     float3 Lo     = (diffuse+specular)*lightColor.rgb*NdotL*shadow;
     float3 ambient = lightAmbient.rgb*albedo.rgb;
     float3 color  = Lo+ambient;
