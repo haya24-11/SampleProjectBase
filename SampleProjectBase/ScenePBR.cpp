@@ -18,7 +18,10 @@ struct VS_IN {
     float2 uv      : TEXCOORD0;
     float3 tangent : TANGENT0;
 };
-struct VS_OUT { float4 pos : SV_POSITION; };
+struct VS_OUT {
+    float4 pos   : SV_POSITION;
+    float  depth : TEXCOORD0;
+};
 cbuffer WVP : register(b0) {
     float4x4 world;
     float4x4 view;
@@ -29,13 +32,15 @@ VS_OUT main(VS_IN vin) {
     float4 p = mul(float4(vin.pos, 1.0f), world);
     p = mul(p, view);
     p = mul(p, proj);
-    o.pos = p;
+    o.pos   = p;
+    o.depth = p.z / p.w;
     return o;
 }
 )";
 
 static const char* PS_SHADOW_SRC = R"(
-float4 main() : SV_TARGET { return float4(0,0,0,0); }
+struct PS_IN { float4 pos : SV_POSITION; float depth : TEXCOORD0; };
+float4 main(PS_IN pin) : SV_TARGET { return float4(pin.depth, 0, 0, 1); }
 )";
 
 static const char* VS_PBR_SRC = R"(
@@ -148,24 +153,26 @@ float4 main(PS_IN pin) : SV_TARGET {
     float3 specular = (D*G*F)/max(4.0f*NdotV*NdotL, 1e-4f);
     float3 kD = (1.0f-F)*(1.0f-metallic);
     float3 diffuse = kD*albedo.rgb/PI;
-    // シャドウ デバッグ可視化
-    // 青 = 影マップ範囲外, 緑 = 範囲内(光当たり), 赤 = 影
-    {
+    // シャドウ (昼間のみ)
+    float shadow = 1.0f;
+    if (dayFactor > 0.1f) {
         float3 proj = pin.shadowPos.xyz / pin.shadowPos.w;
         float2 suv  = proj.xy * 0.5f + 0.5f;
         suv.y = 1.0f - suv.y;
         if (suv.x > 0.0f && suv.x < 1.0f && suv.y > 0.0f && suv.y < 1.0f
             && proj.z >= 0.0f && proj.z <= 1.0f) {
-            float closest = shadowMap.Sample(samp, suv).r;
-            if (proj.z - 0.001f > closest)
-                return float4(1, 0, 0, 1); // 赤 = 影検出
-            else
-                return float4(0, 1, 0, 1); // 緑 = 影マップ範囲内・光当たり
-        } else {
-            return float4(0, 0, 1, 1); // 青 = 影マップ範囲外
+            float shadowDepth = 0.0f;
+            float texelSize = 1.0f / 1024.0f;
+            for (int sy = -1; sy <= 1; ++sy)
+                for (int sx = -1; sx <= 1; ++sx) {
+                    float2 off = float2(sx, sy) * texelSize;
+                    float closest = shadowMap.Sample(samp, suv + off).r;
+                    shadowDepth += (proj.z - 0.002f > closest) ? 1.0f : 0.0f;
+                }
+            shadowDepth /= 9.0f;
+            shadow = 1.0f - shadowDepth * dayFactor * 0.95f;
         }
     }
-    float shadow = 1.0f;
     float3 Lo     = (diffuse+specular)*lightColor.rgb*NdotL*shadow;
     float3 ambient = lightAmbient.rgb*albedo.rgb;
     float3 color  = Lo+ambient;
@@ -274,9 +281,11 @@ void ScenePBR::Init()
 			MessageBox(NULL, d.name, "Shader Compile Error", MB_OK);
 	}
 
-	// シャドウマップ (1024x1024 深度テクスチャ)
-	DepthStencil* pShadow = CreateObj<DepthStencil>("ShadowMap");
-	pShadow->Create(SHADOW_SIZE, SHADOW_SIZE, false);
+	// シャドウマップ: 深度値をR32_FLOATのカラーテクスチャに書き込む方式
+	RenderTarget* pShadowRT = CreateObj<RenderTarget>("ShadowMap");
+	pShadowRT->Create(DXGI_FORMAT_R32_FLOAT, SHADOW_SIZE, SHADOW_SIZE);
+	DepthStencil* pShadowDS = CreateObj<DepthStencil>("ShadowDS");
+	pShadowDS->Create(SHADOW_SIZE, SHADOW_SIZE, false);
 
 	// 地面: FieldModel をタンジェント付き頂点に変換 (UVx4 タイリング)
 	Model* pGround = CreateObj<Model>("PBRGround");
@@ -323,7 +332,7 @@ static void DrawPBR(
 	const DirectX::XMFLOAT4X4& lightVPMat,
 	PBRParam& param,
 	Texture* pNormal,
-	DepthStencil* pShadow)
+	RenderTarget* pShadow)
 {
 	DirectX::XMFLOAT4X4 mat[3];
 	DirectX::XMStoreFloat4x4(&mat[0], DirectX::XMMatrixTranspose(worldMat));
@@ -358,7 +367,8 @@ void ScenePBR::Draw()
 	Shader*       vsShadow= GetObj<Shader>("VS_Shadow");
 	Shader*       psShadow= GetObj<Shader>("PS_Shadow");
 	Texture*      pNormal = GetObj<Texture>("NormalMap");
-	DepthStencil* pShadow = GetObj<DepthStencil>("ShadowMap");
+	RenderTarget* pShadowRT = GetObj<RenderTarget>("ShadowMap");
+	DepthStencil* pShadowDS = GetObj<DepthStencil>("ShadowDS");
 	Model*        pGround = GetObj<Model>("PBRGround");
 	Model*        pModel  = GetObj<Model>("PBRModel");
 
@@ -425,13 +435,16 @@ void ScenePBR::Draw()
 		svp.MaxDepth = 1.0f;
 		GetContext()->RSSetViewports(1, &svp);
 
-		// 前フレームで t2 に残っている shadow SRV を解放してから DSV をバインド
+		// 前フレームで t2 に残っている shadow SRV を解放
 		ID3D11ShaderResourceView* nullSRV = nullptr;
 		GetContext()->PSSetShaderResources(2, 1, &nullSRV);
 
-		// シャドウ DSV のみバインド (カラーバッファなし)
-		GetContext()->OMSetRenderTargets(0, nullptr, pShadow->GetView());
-		GetContext()->ClearDepthStencilView(pShadow->GetView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+		// シャドウ RT + DS をバインド
+		ID3D11RenderTargetView* shadowRTV = pShadowRT->GetView();
+		GetContext()->OMSetRenderTargets(1, &shadowRTV, pShadowDS->GetView());
+		float clearDepth[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		pShadowRT->Clear(clearDepth);
+		pShadowDS->Clear();
 
 		// シャドウキャスター描画
 		DirectX::XMFLOAT4X4 sm[3];
@@ -468,7 +481,7 @@ void ScenePBR::Draw()
 		DrawPBR(pGround,
 			DirectX::XMMatrixScaling(5.0f, 1.0f, 5.0f),
 			vsPBR, psPBR, viewMat, projMat,
-			light, camera, lightVPMat, p, pNormal, pShadow);
+			light, camera, lightVPMat, p, pNormal, pShadowRT);
 	}
 
 	// 2. スポットモデル
@@ -477,6 +490,6 @@ void ScenePBR::Draw()
 		DrawPBR(pModel,
 			DirectX::XMMatrixIdentity(),
 			vsPBR, psPBR, viewMat, projMat,
-			light, camera, lightVPMat, p, pNormal, pShadow);
+			light, camera, lightVPMat, p, pNormal, pShadowRT);
 	}
 }
