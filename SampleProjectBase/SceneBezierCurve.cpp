@@ -47,7 +47,7 @@ void SceneBezierCurve::Draw()
 	DirectX::XMFLOAT3 end;
 	DirectX::XMFLOAT4 color = DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
 
-	// ’¼ü•\¦(ƒfƒoƒbƒO)
+	// ï¿½ï¿½ï¿½ï¿½ï¿½\ï¿½ï¿½(ï¿½fï¿½oï¿½bï¿½O)
 	for (int i=0;i< m_positions.size() -1; i++)
 	{
 		start = DirectX::XMFLOAT3(m_positions[i].x, m_positions[i].y, m_positions[i].z);
@@ -65,15 +65,28 @@ void SceneBezierCurve::Draw()
 DirectX::XMFLOAT3 SceneBezierCurve::GetBezierCurvePosition(float t)
 {
 
-	// ƒxƒWƒF‹ÈüŒvZ
+	// ï¿½xï¿½Wï¿½Fï¿½Èï¿½ï¿½vï¿½Z
 	DirectX::XMFLOAT3 outpos;
 
-	// ‰Û‘è”ÍˆÍ--------------------------------------------------------------------------
+	// ï¿½Û‘ï¿½Íˆï¿½--------------------------------------------------------------------------
 	/*outpos.x = (1-t)
 	outpos.y = 
 	outpos.z = */
 
-	// ----------------------------------------------------------------------------------
+	// ãƒ™ã‚¸ã‚¨æ›²ç·šè¨ˆç®—
+	// P(t).x = (1-t)^3 * Q0.x + 3(1-t)^2 * t * Q1.x + 3(1-t) * t^2 * Q2.x + t^3 * Q3.x
+	// P(t).y = (1-t)^3 * Q0.y + 3(1-t)^2 * t * Q1.y + 3(1-t) * t^2 * Q2.y + t^3 * Q3.y
+	// P(t).z = (1-t)^3 * Q0.z + 3(1-t)^2 * t * Q1.z + 3(1-t) * t^2 * Q2.z + t^3 * Q3.z
+	float t1    = 1.0f - t;
+	float t1_3  = t1 * t1 * t1;
+	float t1_2t = 3.0f * t1 * t1 * t;
+	float t1_t2 = 3.0f * t1 * t * t;
+	float t3    = t * t * t;
+
+	outpos.x = t1_3 * m_positions[0].x + t1_2t * m_positions[1].x + t1_t2 * m_positions[2].x + t3 * m_positions[3].x;
+	outpos.y = t1_3 * m_positions[0].y + t1_2t * m_positions[1].y + t1_t2 * m_positions[2].y + t3 * m_positions[3].y;
+	outpos.z = t1_3 * m_positions[0].z + t1_2t * m_positions[1].z + t1_t2 * m_positions[2].z + t3 * m_positions[3].z;
+
 	return outpos;
 }
 
