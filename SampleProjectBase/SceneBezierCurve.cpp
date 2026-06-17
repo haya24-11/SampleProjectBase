@@ -65,10 +65,10 @@ void SceneBezierCurve::Draw()
 DirectX::XMFLOAT3 SceneBezierCurve::GetBezierCurvePosition(float t)
 {
 
-	// �x�W�F�Ȑ��v�Z
+	
 	DirectX::XMFLOAT3 outpos;
 
-	// �ۑ�͈�--------------------------------------------------------------------------
+	
 	/*outpos.x = (1-t)
 	outpos.y = 
 	outpos.z = */
