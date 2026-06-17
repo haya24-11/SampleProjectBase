@@ -13,7 +13,7 @@ float4 main(PS_IN pin) :SV_TARGET
 {
 	float4 color = float4(0.0f, 0.0f, 0.0f, 1.0f);
 	// 法線マップから法線のデータを取得
-	float3 N = normalMap.Sample(samp, pin.uv).rgb;
+	float3 N = normalMap.Sample(samp, pin.uv);
 	N = normalize(N * 2.0f - 1.0f);
 	// 事前に計算されたテクスチャ空間のライト
 	float3 L = normalize(pin.lightT);
