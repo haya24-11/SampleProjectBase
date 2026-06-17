@@ -3,6 +3,8 @@
 #include "CameraBase.h"
 #include "LightBase.h"
 #include "Input.h"
+#include "Main.h"
+#include <cmath>
 
 // PBR用頂点レイアウト（タンジェントベクトル付き）
 struct PBRVertex
@@ -118,25 +120,63 @@ void ScenePBR::Uninit()
 
 void ScenePBR::Update(float tick)
 {
+	// 1サイクル = 20秒 (昼10秒 + 夜10秒)
+	const float CycleTime = 20.0f;
+	m_time += tick;
+	if (m_time > CycleTime) m_time -= CycleTime;
 }
 
 void ScenePBR::Draw()
 {
 	CameraBase* pCamera = GetObj<CameraBase>("Camera");
-	LightBase*  pLight  = GetObj<LightBase>("Light");
 	Shader*     vsPBR   = GetObj<Shader>("VS_PBR");
 	Shader*     psPBR   = GetObj<Shader>("PS_PBR");
 	Texture*    pNormal = GetObj<Texture>("NormalMap");
+
+	// --- 昼夜パラメータ計算 ---
+	// dayFactor: 1.0=真昼, 0.0=真夜中  (sin カーブでなめらかに推移)
+	const float PI = 3.14159265f;
+	const float CycleTime = 20.0f;
+	float dayFactor = (sinf(m_time / CycleTime * 2.0f * PI - PI * 0.5f) + 1.0f) * 0.5f;
+
+	// 空の色: 昼=青空, 夜=深夜
+	float skyR = 0.4f * dayFactor + 0.01f * (1.0f - dayFactor);
+	float skyG = 0.7f * dayFactor + 0.01f * (1.0f - dayFactor);
+	float skyB = 1.0f * dayFactor + 0.05f * (1.0f - dayFactor);
+	SetClearColor(skyR, skyG, skyB);
+
+	// ライト方向: 太陽/月がアーチを描くように回転
+	// dayFactor=1.0 → 真上(0,-1,0)付近、0.0 → 地平線以下から月
+	float sunAngle = dayFactor * PI;  // 0(地平線) → π(反対の地平線)
+	DirectX::XMFLOAT3 lightDir = {
+		0.0f,
+		-sinf(sunAngle),          // 昼は上から、夜は下から(=月光)
+		cosf(sunAngle)
+	};
+
+	// ライト拡散色: 昼=暖かい白、夜=冷たい青白
+	DirectX::XMFLOAT4 diffuse = {
+		1.0f  * dayFactor + 0.15f * (1.0f - dayFactor),
+		0.92f * dayFactor + 0.15f * (1.0f - dayFactor),
+		0.75f * dayFactor + 0.3f  * (1.0f - dayFactor),
+		1.0f
+	};
+	// 環境光: 昼=明るめ、夜=ほぼ真っ暗
+	DirectX::XMFLOAT4 ambient = {
+		0.25f * dayFactor + 0.02f * (1.0f - dayFactor),
+		0.25f * dayFactor + 0.02f * (1.0f - dayFactor),
+		0.3f  * dayFactor + 0.04f * (1.0f - dayFactor),
+		1.0f
+	};
 
 	// 定数バッファ共通データ
 	DirectX::XMFLOAT4X4 mat[3];
 	mat[1] = pCamera->GetView();
 	mat[2] = pCamera->GetProj();
 
-	DirectX::XMFLOAT3 lightDir = pLight->GetDirection();
 	DirectX::XMFLOAT4 light[] = {
-		pLight->GetDiffuse(),
-		pLight->GetAmbient(),
+		diffuse,
+		ambient,
 		{ lightDir.x, lightDir.y, lightDir.z, 0.0f }
 	};
 	DirectX::XMFLOAT3 camPos = pCamera->GetPos();

@@ -10,6 +10,8 @@ public:
 	void Uninit();
 	void Update(float tick);
 	void Draw();
+private:
+	float m_time = 0.0f;
 };
 
 #endif // __SCENE_PBR_H__

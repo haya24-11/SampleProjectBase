@@ -9,6 +9,15 @@
 
 //--- グローバル変数
 std::shared_ptr<SceneRoot> g_pScene;
+static float g_clearColor[4] = { 0.1f, 0.2f, 0.3f, 1.0f };
+
+void SetClearColor(float r, float g, float b)
+{
+	g_clearColor[0] = r;
+	g_clearColor[1] = g;
+	g_clearColor[2] = b;
+	g_clearColor[3] = 1.0f;
+}
 
 HRESULT Init(HWND hWnd, UINT width, UINT height)
 {
@@ -59,8 +68,7 @@ void Draw()
 {
 	auto rtv = g_pScene->GetObj<RenderTarget>("RTV");
 	auto dsv = g_pScene->GetObj<DepthStencil>("DSV");
-	float color[4] = { 0.1f, 0.2f, 0.3f, 1.0f };
-	GetContext()->ClearRenderTargetView(rtv->GetView(), color);
+	GetContext()->ClearRenderTargetView(rtv->GetView(), g_clearColor);
 	GetContext()->ClearDepthStencilView(dsv->GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	g_pScene->_draw();
