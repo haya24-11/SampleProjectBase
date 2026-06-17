@@ -167,7 +167,7 @@ float4 main(PS_IN pin) : SV_TARGET {
                 for (int sx = -1; sx <= 1; ++sx) {
                     float2 off = float2(sx, sy) * texelSize;
                     float closest = shadowMap.Sample(samp, suv + off).r;
-                    shadowDepth += (proj.z - 0.002f > closest) ? 1.0f : 0.0f;
+                    shadowDepth += (proj.z - 0.0005f > closest) ? 1.0f : 0.0f;
                 }
             shadowDepth /= 9.0f;
             shadow = 1.0f - shadowDepth * dayFactor * 0.95f;
@@ -462,7 +462,7 @@ void ScenePBR::Draw()
 		};
 
 		drawShadow(pGround, DirectX::XMMatrixScaling(5.0f, 1.0f, 5.0f));
-		drawShadow(pModel,  DirectX::XMMatrixIdentity());
+		drawShadow(pModel,  DirectX::XMMatrixScaling(1.0f, 3.0f, 1.0f));
 
 		// RT / ビューポートを復元
 		GetContext()->OMSetRenderTargets(1, &pOldRTV, pOldDSV);
@@ -488,7 +488,7 @@ void ScenePBR::Draw()
 	{
 		PBRParam p = { 0.0f, 0.4f, dayFactor, 0.0f };
 		DrawPBR(pModel,
-			DirectX::XMMatrixIdentity(),
+			DirectX::XMMatrixScaling(1.0f, 3.0f, 1.0f),
 			vsPBR, psPBR, viewMat, projMat,
 			light, camera, lightVPMat, p, pNormal, pShadowRT);
 	}
