@@ -150,15 +150,23 @@ float4 main(PS_IN pin) : SV_TARGET {
     float3 diffuse = kD*albedo.rgb/PI;
     // シャドウ (昼間のみ)
     float shadow = 1.0f;
-    if (dayFactor > 0.2f) {
+    if (dayFactor > 0.1f) {
         float3 proj = pin.shadowPos.xyz / pin.shadowPos.w;
         float2 suv  = proj.xy * 0.5f + 0.5f;
         suv.y = 1.0f - suv.y;
-        if (suv.x >= 0.0f && suv.x <= 1.0f && suv.y >= 0.0f && suv.y <= 1.0f) {
-            float closest = shadowMap.Sample(samp, suv).r;
-            float current = proj.z - 0.005f;
-            float inShadow = (current > closest) ? 1.0f : 0.0f;
-            shadow = 1.0f - inShadow * dayFactor * 0.7f;
+        if (suv.x > 0.0f && suv.x < 1.0f && suv.y > 0.0f && suv.y < 1.0f
+            && proj.z >= 0.0f && proj.z <= 1.0f) {
+            // PCF 3x3
+            float shadowDepth = 0.0f;
+            float texelSize = 1.0f / 1024.0f;
+            for (int sy = -1; sy <= 1; ++sy)
+                for (int sx = -1; sx <= 1; ++sx) {
+                    float2 off = float2(sx, sy) * texelSize;
+                    float closest = shadowMap.Sample(samp, suv + off).r;
+                    shadowDepth += (proj.z - 0.002f > closest) ? 1.0f : 0.0f;
+                }
+            shadowDepth /= 9.0f;
+            shadow = 1.0f - shadowDepth * dayFactor * 0.95f;
         }
     }
     float3 Lo     = (diffuse+specular)*lightColor.rgb*NdotL*shadow;
@@ -395,13 +403,13 @@ void ScenePBR::Draw()
 	{
 		// 太陽位置からライトを照らす
 		DirectX::XMVECTOR lPos = DirectX::XMVectorSet(
-			-lightDir.x * 50.0f, -lightDir.y * 50.0f, -lightDir.z * 50.0f, 1.0f);
+			-lightDir.x * 100.0f, -lightDir.y * 100.0f, -lightDir.z * 100.0f, 1.0f);
 		DirectX::XMVECTOR lTarget = DirectX::XMVectorZero();
 		DirectX::XMVECTOR lUp = (fabsf(lightDir.y) > 0.95f)
 			? DirectX::XMVectorSet(1, 0, 0, 0)
 			: DirectX::XMVectorSet(0, 1, 0, 0);
 		lightViewMat = DirectX::XMMatrixLookAtLH(lPos, lTarget, lUp);
-		lightProjMat = DirectX::XMMatrixOrthographicLH(70.0f, 70.0f, 1.0f, 120.0f);
+		lightProjMat = DirectX::XMMatrixOrthographicLH(150.0f, 150.0f, 1.0f, 250.0f);
 		DirectX::XMMATRIX lvp = lightViewMat * lightProjMat;
 		DirectX::XMStoreFloat4x4(&lightVPMat, DirectX::XMMatrixTranspose(lvp));
 
