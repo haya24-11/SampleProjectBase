@@ -167,10 +167,10 @@ float4 main(PS_IN pin) : SV_TARGET {
                 for (int sx = -1; sx <= 1; ++sx) {
                     float2 off = float2(sx, sy) * texelSize;
                     float closest = shadowMap.Sample(samp, suv + off).r;
-                    shadowDepth += (proj.z - 0.0005f > closest) ? 1.0f : 0.0f;
+                    shadowDepth += (proj.z - 0.001f > closest) ? 1.0f : 0.0f;
                 }
             shadowDepth /= 9.0f;
-            shadow = 1.0f - shadowDepth * dayFactor * 0.95f;
+            shadow = 1.0f - shadowDepth * 0.85f;
         }
     }
     float3 Lo     = (diffuse+specular)*lightColor.rgb*NdotL*shadow;
