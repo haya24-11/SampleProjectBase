@@ -428,6 +428,10 @@ void ScenePBR::Draw()
 		svp.MaxDepth = 1.0f;
 		GetContext()->RSSetViewports(1, &svp);
 
+		// 前フレームで t2 に残っている shadow SRV を解放してから DSV をバインド
+		ID3D11ShaderResourceView* nullSRV = nullptr;
+		GetContext()->PSSetShaderResources(2, 1, &nullSRV);
+
 		// シャドウ DSV のみバインド (カラーバッファなし)
 		GetContext()->OMSetRenderTargets(0, nullptr, pShadow->GetView());
 		GetContext()->ClearDepthStencilView(pShadow->GetView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
