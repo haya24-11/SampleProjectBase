@@ -167,7 +167,7 @@ float4 main(PS_IN pin) : SV_TARGET {
                 for (int sx = -1; sx <= 1; ++sx) {
                     float2 off = float2(sx, sy) * texelSize;
                     float closest = shadowMap.Sample(samp, suv + off).r;
-                    shadowDepth += (proj.z - 0.001f > closest) ? 1.0f : 0.0f;
+                    shadowDepth += (proj.z - 0.005f > closest) ? 1.0f : 0.0f;
                 }
             shadowDepth /= 9.0f;
             float shadowStrength = saturate(dayFactor * 2.0f) * 0.85f;
