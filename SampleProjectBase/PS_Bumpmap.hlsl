@@ -21,7 +21,7 @@ float4 main(PS_IN pin) :SV_TARGET
 	// 法線とライトから明るさを計算(今まで通り
 	float diffuse = saturate(dot(-L, N));
 	color = tex.Sample(samp, pin.uv);
-	color.rgb = color.rgb * diffuse;
+    color.rgb = color.rgb * diffuse * (1.0f/3.14159265);
 
 	return color;
 }
