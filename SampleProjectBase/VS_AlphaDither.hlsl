@@ -8,13 +8,13 @@ struct VS_IN
 };
 struct VS_OUT
 {
-	float4 pos : SV_POSITION0;
+	float4 pos : SV_POSITION;
 	float2 uv : TEXCOORD0;
-	float3 normal : NORMAL0;
+	float3 normal : TEXCOORD1;
 	// スクリーン座標とは別に、ワールド座標のデータを用意
 	// ピクセルシェーダーに渡ると、ピクセルごとのワールド座標のデータになる
-	float4 worldPos : POSITION0;
-	float4 screenPos : POSITION1;
+	float4 worldPos : TEXCOORD2;
+	float4 screenPos : TEXCOORD3;
 };
 
 cbuffer WVP : register(b0)
