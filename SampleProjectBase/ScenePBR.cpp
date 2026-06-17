@@ -170,7 +170,8 @@ float4 main(PS_IN pin) : SV_TARGET {
                     shadowDepth += (proj.z - 0.001f > closest) ? 1.0f : 0.0f;
                 }
             shadowDepth /= 9.0f;
-            shadow = 1.0f - shadowDepth * 0.85f;
+            float shadowStrength = saturate(dayFactor * 2.0f) * 0.85f;
+            shadow = 1.0f - shadowDepth * shadowStrength;
         }
     }
     float3 Lo     = (diffuse+specular)*lightColor.rgb*NdotL*shadow;
@@ -462,7 +463,7 @@ void ScenePBR::Draw()
 		};
 
 		drawShadow(pGround, DirectX::XMMatrixScaling(5.0f, 1.0f, 5.0f));
-		drawShadow(pModel,  DirectX::XMMatrixScaling(1.0f, 3.0f, 1.0f));
+		drawShadow(pModel,  DirectX::XMMatrixIdentity());
 
 		// RT / ビューポートを復元
 		GetContext()->OMSetRenderTargets(1, &pOldRTV, pOldDSV);
@@ -488,7 +489,7 @@ void ScenePBR::Draw()
 	{
 		PBRParam p = { 0.0f, 0.4f, dayFactor, 0.0f };
 		DrawPBR(pModel,
-			DirectX::XMMatrixScaling(1.0f, 3.0f, 1.0f),
+			DirectX::XMMatrixIdentity(),
 			vsPBR, psPBR, viewMat, projMat,
 			light, camera, lightVPMat, p, pNormal, pShadowRT);
 	}
