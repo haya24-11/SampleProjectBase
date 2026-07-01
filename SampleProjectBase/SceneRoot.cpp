@@ -5,6 +5,7 @@
 #include "Model.h"
 #include "Input.h"
 #include "Geometory.h"
+#include "Billboard.h"
 #include"SceneToon.h"
 #include "SceneVisual.h"
 #include "SceneBlank.h"
@@ -16,6 +17,7 @@
 #include"SceneBezierCurve.h"
 #include "ScenePBR.h"
 #include"SceneSpring.h"
+#include"SceneParticleSystem.h"
 #include "DebugLog.h"
 
 
@@ -35,6 +37,7 @@ enum SceneKind
 	SCENE_BURSTVECTOE,
 	SCENE_BEZIERCURVE,
 	SCENE_TOON,
+	SCENE_PARTICLE,
 	SCENE_PBR,
 	SCENE_SPRING,
 	SCENE_MAX			// 終端
@@ -86,10 +89,14 @@ void SceneRoot::ChangeScene()
 		AddSubScene<ScenePBR>();
 		m_sceneName = "SCENE_PBR";
 		break;
+	case SCENE_PARTICLE:
+		AddSubScene<SceneParticleSystem>();
+		m_sceneName = "SCENE_particle";
+		break;
 	case SCENE_SPRING:
 		AddSubScene<SceneSpring>();
 		m_sceneName = "SCENE_SPRING";
-
+		break;
 	/*case SCENE_ANIMATION:
 		AddSubScene<SceneAnimation>();
 		sceneName = "SCENE_HIT";
@@ -241,6 +248,8 @@ void SceneRoot::Draw()
 	Geometory::SetWorld(fmat);
 	Geometory::SetView(pCamera->GetView());
 	Geometory::SetProjection(pCamera->GetProj());
+	Billboard::SetView(pCamera->GetView());
+	Billboard::SetProjection(pCamera->GetProj());
 
 	// 網掛け描画
 	const int GridSize = 10;

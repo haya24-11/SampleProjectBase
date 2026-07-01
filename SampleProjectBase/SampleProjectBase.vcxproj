@@ -179,6 +179,7 @@
     <ClCompile Include="CameraWater.cpp" />
     <ClCompile Include="CameraWipe.cpp" />
     <ClCompile Include="DirectX.cpp" />
+    <ClCompile Include="Emitter.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="LightBase.cpp" />
     <ClCompile Include="MeshBuffer.cpp" />
@@ -186,6 +187,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="MoveLight.cpp" />
+    <ClCompile Include="Particle.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="SceneAnimation.cpp" />
     <ClCompile Include="SceneBase.cpp" />
@@ -195,6 +197,7 @@
     <ClCompile Include="SceneBurstVectoe.cpp" />
     <ClCompile Include="SceneLight.cpp" />
     <ClCompile Include="SceneMoveObject.cpp" />
+    <ClCompile Include="SceneParticleSystem.cpp" />
     <ClCompile Include="SceneShading.cpp" />
     <ClCompile Include="ScenePBR.cpp" />
     <ClCompile Include="SceneSpring.cpp" />
@@ -209,6 +212,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.h" />
+    <ClInclude Include="Billboard.h" />
     <ClInclude Include="Box.h" />
     <ClInclude Include="CameraDCC.h" />
     <ClInclude Include="CameraBase.h" />
@@ -217,6 +221,7 @@
     <ClInclude Include="DebugLog.h" />
     <ClInclude Include="Defines.h" />
     <ClInclude Include="DirectX.h" />
+    <ClInclude Include="Emitter.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="LightBase.h" />
     <ClInclude Include="MeshBuffer.h" />
@@ -224,6 +229,7 @@
     <ClInclude Include="Main.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="MoveLight.h" />
+    <ClInclude Include="Particle.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="SceneAnimation.h" />
     <ClInclude Include="SceneBase.hpp" />
@@ -233,6 +239,7 @@
     <ClInclude Include="SceneBurstVectoe.h" />
     <ClInclude Include="SceneLight.h" />
     <ClInclude Include="SceneMoveObject.h" />
+    <ClInclude Include="SceneParticleSystem.h" />
     <ClInclude Include="SceneRoot.h" />
     <ClInclude Include="SceneShading.h" />
     <ClInclude Include="ScenePBR.h" />
