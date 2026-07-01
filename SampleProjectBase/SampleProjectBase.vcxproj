@@ -197,6 +197,7 @@
     <ClCompile Include="SceneMoveObject.cpp" />
     <ClCompile Include="SceneShading.cpp" />
     <ClCompile Include="ScenePBR.cpp" />
+    <ClCompile Include="SceneSpring.cpp" />
     <ClCompile Include="SceneToon.cpp" />
     <ClCompile Include="SceneVisual.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -235,6 +236,7 @@
     <ClInclude Include="SceneRoot.h" />
     <ClInclude Include="SceneShading.h" />
     <ClInclude Include="ScenePBR.h" />
+    <ClInclude Include="SceneSpring.h" />
     <ClInclude Include="SceneToon.h" />
     <ClInclude Include="SceneVisual.h" />
     <ClInclude Include="Shader.h" />

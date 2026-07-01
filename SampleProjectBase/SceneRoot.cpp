@@ -15,6 +15,7 @@
 #include"SceneBumpmap.h"
 #include"SceneBezierCurve.h"
 #include "ScenePBR.h"
+#include"SceneSpring.h"
 #include "DebugLog.h"
 
 
@@ -35,6 +36,7 @@ enum SceneKind
 	SCENE_BEZIERCURVE,
 	SCENE_TOON,
 	SCENE_PBR,
+	SCENE_SPRING,
 	SCENE_MAX			// 終端
 };
 
@@ -84,6 +86,9 @@ void SceneRoot::ChangeScene()
 		AddSubScene<ScenePBR>();
 		m_sceneName = "SCENE_PBR";
 		break;
+	case SCENE_SPRING:
+		AddSubScene<SceneSpring>();
+		m_sceneName = "SCENE_SPRING";
 
 	/*case SCENE_ANIMATION:
 		AddSubScene<SceneAnimation>();
