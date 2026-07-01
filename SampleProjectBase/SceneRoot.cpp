@@ -178,7 +178,8 @@ void SceneRoot::Init()
 	pField->Load("Assets/Model/field/field.fbx", 1.0f, false, true);
 
 	// シーンの作成
-	m_index = setting.index;
+	// 起動時は必ずパーティクルシーンを表示する
+	m_index = SCENE_PARTICLE;
 	ChangeScene();
 }
 
