@@ -1,14 +1,19 @@
 ﻿#include "SceneParticleSystem.h"
 #include "Geometory.h"
+#include "DebugLog.h"
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
 void SceneParticleSystem::Init()
-{	
+{
 	// エミッター初期化
 	Texture* p_tex = CreateObj<Texture>("ParticleTex");
-	p_tex->Create("Assets/Texture/particle.png");
+	if (FAILED(p_tex->Create("Assets/Texture/particle.png")))
+	{
+		// テクスチャの読み込みに失敗するとパーティクルが描画されない
+		DebugLog::log(DebugLog::INFO_LOG, "particle.png の読み込みに失敗しました");
+	}
 
 	// テクスチャ設定
 	m_emitter.SetTexture(p_tex);
