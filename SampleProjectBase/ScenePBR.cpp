@@ -444,7 +444,7 @@ void ScenePBR::Draw()
 		ID3D11RenderTargetView* shadowRTV = pShadowRT->GetView();
 		GetContext()->OMSetRenderTargets(1, &shadowRTV, pShadowDS->GetView());
 		float clearDepth[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-		pShadowRT->Clear(clearDepth
+		pShadowRT->Clear(clearDepth);
 		pShadowDS->Clear();
 
 		// シャドウキャスター描画
